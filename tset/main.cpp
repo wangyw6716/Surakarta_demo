@@ -83,11 +83,124 @@ void hihe()
 //
 //}
 
-void Grc() {
+int chi = 0;
+void Grc(int x, int y, int flag) {//判断是否走了圆弧
+	//int x = msgmove.x;
+	//int y = msgmove.y;
+	if (chi)return;
+	printf("x:%d,y:%d",x,y);
 	if ((msgmove.x == 0 && msgmove.y == 0) || (msgmove.x == 0 && msgmove.y == 5) || (msgmove.x == 5 && msgmove.y == 0) || (msgmove.x == 5 && msgmove.y == 5)) {
+		MessageBox(NULL, "飞着走,想上天啊", "提示", MB_OK);
+		msgmove.n++;
 		return;
 	}
-	cout << msgmove.x;
+
+	if ((map[x][y].name == 0 || map[x][y].name == msgmove.name) && flag)
+	{
+		printf("flag:%d",flag);
+		//MessageBox(NULL, "不能飞着走或者吃自己子哦", "提示", MB_OK);
+		msgmove.n++;
+		return;
+	}
+
+	// 如果是敌方棋子且经过圆弧
+	if (map[x][y].name != msgmove.name && flag == 1) {
+		msgmove.n++;
+		msgmove.nhb++;
+		printf("吃子");
+		map[msgmove.x][msgmove.y].name = 0;
+		map[msg.x][msg.y].name = msgmove.name;
+		chi = 1;
+		return;
+
+	}else if (map[x][y].name != msgmove.name) {
+		return;
+	}
+
+
+	if (msg.x == x && msg.y == y && flag == 1) {
+		msgmove.n++;
+		msgmove.nhb++;
+		printf("吃子");
+		map[msgmove.x][msgmove.y].name = 0;
+		map[msg.x][msg.y].name = msgmove.name;
+	}
+
+	printf("\n递归开始");
+
+	// 如果是切点的情况
+	if (x == 0 && y == 1) {
+		Grc(1, 0,1);
+	}
+	else if (x == 0 && y == 2) {
+		Grc(2, 0, 1);
+	}
+	else if (x == 0 && y == 3) {
+		Grc(2, 5,1);
+	}
+	else if (x == 0 && y == 4) {
+		Grc(1, 5, 1);
+	}
+	else if (x == 1 && y == 0) {
+		Grc(0, 1, 1);
+	}
+	else if (x == 2 && y == 0) {
+		Grc(0, 2, 1);
+	}
+	else if (x == 3 && y == 0) {
+		Grc(5, 2, 1);
+	}
+	else if (x == 4 && y == 0) {
+		Grc(5, 1, 1);
+	}
+	else if (x == 1 && y == 5) {
+		Grc(0, 4, 1);
+	}
+	else if (x == 2 && y == 5) {
+		Grc(0, 3, 1);
+	}
+	else if (x == 3 && y == 5) {
+		Grc(5, 3, 1);
+	}
+	else if (x == 4 && y == 5) {
+		Grc(5, 4, 1);
+	}
+	else if (x == 5 && y == 1) {
+		Grc(4, 0, 1);
+	}
+	else if (x == 5 && y == 2) {
+		Grc(3, 0, 1);
+	}
+	else if (x == 5 && y == 3) {
+		Grc(3, 5, 1);
+	}
+	else if (x == 5 && y == 4) {
+		Grc(4, 5, 1);
+	}
+
+	//// 上
+	if (x - 1 >= 0) {
+		Grc(x - 1, y, flag);
+	}
+
+
+	//// 下
+	if (x + 1 <= 5) {
+		Grc(x + 1, y,  flag);
+	}
+
+	//// 左
+	if (y - 1 >= 0) {
+		Grc(x, y - 1, flag);
+	}
+
+	//// 右
+	if (y + 1 <= 5) {
+		Grc(x, y + 1, flag);
+	}
+
+
+	//MessageBox(NULL, "落子不符合规则223", "提示", MB_OK);
 	return;
 }
 
@@ -127,12 +240,13 @@ void zouzi(int he)
 				}
 				else {
 					MessageBox(NULL, "落子不符合规则", "提示", MB_OK);
+					msgmove.n++;
 				}
 			}
 			else {
-
-				Grc();
-				MessageBox(NULL, "落子不符合规则", "提示", MB_OK);
+				chi = 0;
+				Grc(msgmove.x, msgmove.y,0);
+				
 
 			}
 		   break;
