@@ -1,0 +1,8 @@
+
+/*      */
+
+#include<iostream>
+#include<graphics.h>	//图形库 需要额外安装
+#include<mmsystem.h>//包含多媒体接口头文件
+#include<conio.h> //
+#include<math.h>//数学头文件
