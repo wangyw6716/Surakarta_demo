@@ -83,6 +83,11 @@ void hihe()
 //
 //}
 
+
+/*
+
+
+
 int chi = 0;
 void Grc(int x, int y, int flag) {//判断是否走了圆弧
 	//int x = msgmove.x;
@@ -203,6 +208,193 @@ void Grc(int x, int y, int flag) {//判断是否走了圆弧
 	//MessageBox(NULL, "落子不符合规则223", "提示", MB_OK);
 	return;
 }
+*/
+
+
+// 搜寻所选棋子的飞行吃子走位（深度优先）
+// direction为搜索路线方向，0四个方向，1上，2下，3左，4右，type为棋子类型(废弃):1玩家\2电脑
+
+void fly_dfs(int x, int y, int direction, int type, int flag) {
+	printf("\nx:%d,y:%d", x, y);
+	// 四个角
+	if ((x == 0 && y == 0) || (x == 0 && y == 5) || (x == 5 && y == 0) || (x == 5 && y == 5)) {
+		return;
+	}
+
+	// 如果是敌方棋子且经过圆弧
+	if (map[x][y].name != msgmove.name && flag == 1) {
+		msgmove.n++;
+		msgmove.nhb++;
+		printf("\n吃子\n");
+		map[msgmove.x][msgmove.y].name = 0;
+		map[msg.x][msg.y].name = msgmove.name;
+		return;
+	}
+	else if (map[x][y].name != msgmove.name) {
+		return;
+	}
+
+	// 如果是己方棋子
+	if (map[x][y].name == msgmove.name && direction != 0) {
+		return;
+	}
+
+	// 起始点
+	if (direction == 0) {
+
+		// 如果是切点的情况
+		if (x == 0 && y == 1) {
+			fly_dfs(1, 0, 4, type, 1);
+		}
+		else if (x == 0 && y == 2) {
+			fly_dfs(2, 0, 4, type, 1);
+		}
+		else if (x == 0 && y == 3) {
+			fly_dfs(2, 5, 3, type, 1);
+		}
+		else if (x == 0 && y == 4) {
+			fly_dfs(1, 5, 3, type, 1);
+		}
+		else if (x == 1 && y == 0) {
+			fly_dfs(0, 1, 2, type, 1);
+		}
+		else if (x == 2 && y == 0) {
+			fly_dfs(0, 2, 2, type, 1);
+		}
+		else if (x == 3 && y == 0) {
+			fly_dfs(5, 2, 1, type, 1);
+		}
+		else if (x == 4 && y == 0) {
+			fly_dfs(5, 1, 1, type, 1);
+		}
+		else if (x == 1 && y == 5) {
+			fly_dfs(0, 4, 2, type, 1);
+		}
+		else if (x == 2 && y == 5) {
+			fly_dfs(0, 3, 2, type, 1);
+		}
+		else if (x == 3 && y == 5) {
+			fly_dfs(5, 3, 1, type, 1);
+		}
+		else if (x == 4 && y == 5) {
+			fly_dfs(5, 4, 1, type, 1);
+		}
+		else if (x == 5 && y == 1) {
+			fly_dfs(4, 0, 4, type, 1);
+		}
+		else if (x == 5 && y == 2) {
+			fly_dfs(3, 0, 4, type, 1);
+		}
+		else if (x == 5 && y == 3) {
+			fly_dfs(3, 5, 3, type, 1);
+		}
+		else if (x == 5 && y == 4) {
+			fly_dfs(4, 5, 3, type, 1);
+		}
+
+		// 上
+		if (x - 1 >= 0) {
+			fly_dfs(x - 1, y, 1, type, flag);
+		}
+
+		// 下
+		if (x + 1 <= 5) {
+			fly_dfs(x + 1, y, 2, type, flag);
+		}
+
+		// 左
+		if (y - 1 >= 0) {
+			fly_dfs(x, y - 1, 3, type, flag);
+		}
+
+		// 右
+		if (y + 1 <= 5) {
+			fly_dfs(x, y + 1, 4, type, flag);
+		}
+	}
+	else {
+
+		// 如果是切点
+		if (x == 0 && y == 1 && direction == 1) {
+			fly_dfs(1, 0, 4, type, 1);
+		}
+		else if (x == 0 && y == 2 && direction == 1) {
+			fly_dfs(2, 0, 4, type, 1);
+		}
+		else if (x == 0 && y == 3 && direction == 1) {
+			fly_dfs(2, 5, 3, type, 1);
+		}
+		else if (x == 0 && y == 4 && direction == 1) {
+			fly_dfs(1, 5, 3, type, 1);
+		}
+		else if (x == 1 && y == 0 && direction == 3) {
+			fly_dfs(0, 1, 2, type, 1);
+		}
+		else if (x == 2 && y == 0 && direction == 3) {
+			fly_dfs(0, 2, 2, type, 1);
+		}
+		else if (x == 3 && y == 0 && direction == 3) {
+			fly_dfs(5, 2, 1, type, 1);
+		}
+		else if (x == 4 && y == 0 && direction == 3) {
+			fly_dfs(5, 1, 1, type, 1);
+		}
+		else if (x == 1 && y == 5 && direction == 4) {
+			fly_dfs(0, 4, 2, type, 1);
+		}
+		else if (x == 2 && y == 5 && direction == 4) {
+			fly_dfs(0, 3, 2, type, 1);
+		}
+		else if (x == 3 && y == 5 && direction == 4) {
+			fly_dfs(5, 3, 1, type, 1);
+		}
+		else if (x == 4 && y == 5 && direction == 4) {
+			fly_dfs(5, 4, 1, type, 1);
+		}
+		else if (x == 5 && y == 1 && direction == 2) {
+			fly_dfs(4, 0, 4, type, 1);
+		}
+		else if (x == 5 && y == 2 && direction == 2) {
+			fly_dfs(3, 0, 4, type, 1);
+		}
+		else if (x == 5 && y == 3 && direction == 2) {
+			fly_dfs(3, 5, 3, type, 1);
+		}
+		else if (x == 5 && y == 4 && direction == 2) {
+			fly_dfs(4, 5, 3, type, 1);
+		}
+
+		// 上
+		if (direction == 1) {
+			if (x - 1 >= 0) {
+				fly_dfs(x - 1, y, direction, type, flag);
+			}
+		}
+
+		// 下
+		if (direction == 2) {
+			if (x + 1 <= 5) {
+				fly_dfs(x + 1, y, direction, type, flag);
+			}
+		}
+
+		// 左
+		if (direction == 3) {
+			if (y - 1 >= 0) {
+				fly_dfs(x, y - 1, direction, type, flag);
+			}
+		}
+
+		// 右
+		if (direction == 4) {
+			if (y + 1 <= 5) {
+				fly_dfs(x, y + 1, direction, type, flag);
+			}
+		}
+	}
+}
+
+
 
 //走子函数  he值为1时黑子回合，为2时白子回合
 void zouzi(int he)
@@ -215,7 +407,7 @@ void zouzi(int he)
 				if (map[msg.x][msg.y].name ==he)//判断该坐标是否有棋子  拿子必须有棋子
 				{
 					msgmove.n++;
-					printf("拿子");
+					printf("\n拿子");
 					msgmove.x = msg.x;
 					msgmove.y = msg.y;
 					msgmove.name = map[msgmove.x][msgmove.y].name;
@@ -223,33 +415,37 @@ void zouzi(int he)
 				}
 				else if (map[msg.x][msg.y].name != he)
 				{
-					MessageBox(NULL, "不是你的回合", "提示", MB_OK);
+					//MessageBox(NULL, "不是你的回合", "提示", MB_OK);
+					printf("\n不是你的回合");
 
 				}
 					break;
 	 	case 0:
+			fly_dfs(msgmove.x, msgmove.y, 0, 0, 0); 
 			if (msg.x - msgmove.x<2 && msg.y - msgmove.y<2 && msg.x - msgmove.x>-2 && msg.y - msgmove.y>-2)
 			{
 				if (map[msg.x][msg.y].name == 0)//判断该坐标是否有棋子或吃子 || map[msg.x][msg.y].name != msgmove.name  判断该点是否有棋子,没棋子就允许落子
 				{
 					msgmove.n++;
 					msgmove.nhb++;
-					printf("落子");
+					printf("\n落子\n");
 					map[msgmove.x][msgmove.y].name = 0;
 					map[msg.x][msg.y].name = msgmove.name;
 				}
 				else {
-					MessageBox(NULL, "落子不符合规则", "提示", MB_OK);
+					printf("\n落子不符合规则");
+					//MessageBox(NULL, "落子不符合规则", "提示", MB_OK);
 					msgmove.n++;
 				}
 			}
-			else {
-				chi = 0;
-				Grc(msgmove.x, msgmove.y,0);
-				
+			//else {
+			//	chi = 0;
+			//	fly_dfs(msgmove.x, msgmove.y, 0,0,0);
+			//	//Grc(msgmove.x, msgmove.y,0);
+			//	
 
-			}
-		   break;
+			//}
+			break;
 	
 	}
 }
