@@ -431,34 +431,53 @@ void zouzi(int he)
 				}
 					break;
 	 	case 0:
-			chi = 0;
-			fly_dfs(msgmove.x, msgmove.y, 0, 0, 0); 
-			if (msg.x - msgmove.x<2 && msg.y - msgmove.y<2 && msg.x - msgmove.x>-2 && msg.y - msgmove.y>-2 && !chi)
-			{
-				if (map[msg.x][msg.y].name == 0)//判断该坐标是否有棋子或吃子 || map[msg.x][msg.y].name != msgmove.name  判断该点是否有棋子,没棋子就允许落子
+			if (map[msg.x][msg.y].name == map[msgmove.x][msgmove.y].name) {//重新拿子
+				//msgmove.n++;
+				if (map[msg.x][msg.y].name == he)//判断该坐标是否有棋子  拿子必须有棋子
 				{
-					msgmove.n++;
-					msgmove.nhb++;
-					printf("\n落子\n");
-					chi = 0;
-					map[msgmove.x][msgmove.y].name = 0;
-					map[msg.x][msg.y].name = msgmove.name;
+					//msgmove.n++;
+					printf("\n拿子");
+					msgmove.x = msg.x;
+					msgmove.y = msg.y;
+					msgmove.name = map[msgmove.x][msgmove.y].name;
+					//	tishi();
 				}
-				else {
+				else if (map[msg.x][msg.y].name != he)
+				{
+					//MessageBox(NULL, "不是你的回合", "提示", MB_OK);
+					printf("\n不是你的回合");
+
+				}
+			}else{
+				chi = 0;
+				fly_dfs(msgmove.x, msgmove.y, 0, 0, 0); 
+				if (msg.x - msgmove.x<2 && msg.y - msgmove.y<2 && msg.x - msgmove.x>-2 && msg.y - msgmove.y>-2 && !chi)
+				{
+					if (map[msg.x][msg.y].name == 0)//判断该坐标是否有棋子或吃子 || map[msg.x][msg.y].name != msgmove.name  判断该点是否有棋子,没棋子就允许落子
+					{
+						msgmove.n++;
+						msgmove.nhb++;
+						printf("\n落子\n");
+						chi = 0;
+						map[msgmove.x][msgmove.y].name = 0;
+						map[msg.x][msg.y].name = msgmove.name;
+					}
+					else {
+						printf("\n落子不符合规则");
+						//MessageBox(NULL, "落子不符合规则", "提示", MB_OK);
+						msgmove.n++;
+						chi = 0;
+						printf("\n请重新拿子");
+					}
+				}
+				else if (!chi) {
 					printf("\n落子不符合规则");
 					//MessageBox(NULL, "落子不符合规则", "提示", MB_OK);
 					msgmove.n++;
 					chi = 0;
-					printf("请重新拿子");
+					printf("\n请重新拿子");
 				}
 			}
-			//else {
-			//	chi = 0;
-			//	fly_dfs(msgmove.x, msgmove.y, 0,0,0);
-			//	//Grc(msgmove.x, msgmove.y,0);
-			//	
-
-			//}
 			break;
 	
 	}
