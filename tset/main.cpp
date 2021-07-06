@@ -89,7 +89,7 @@ void hihe()
 
 
 // 搜寻所选棋子的飞行吃子走位（深度优先）
-// direction为搜索路线方向，0四个方向，1上，2下，3左，4右，       type为棋子类型(废弃):1玩家\2电脑
+// direction为搜索路线方向，0四个方向，1上，2下，3左，4右，type为棋子类型(废弃,没有用)
 int chi = 0;
 void fly_dfs(int x, int y, int direction, int type, int flag) {
 	printf("\nx:%d,y:%d,direction:%d,flag:%d", x, y, direction, flag);
