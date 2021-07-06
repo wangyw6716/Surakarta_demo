@@ -1,6 +1,7 @@
 #include"Hfolder.h"
 #pragma comment(lib,"winmm.lib")//加载库---音乐
 
+void AI(int ai);
 
 //遍历棋子个数
 void number()
@@ -60,7 +61,8 @@ void hihe()
 	ixd = msgmove.nhb % 2;
 	if (ixd == 1)
 	{
-		zouzi(1);  //调用走子函数
+		//zouzi(1);  //调用走子函数
+		AI(1);
 	}
 	else if (ixd == 0)
 	{
@@ -84,131 +86,6 @@ void hihe()
 //}
 
 
-/*
-
-
-
-int chi = 0;
-void Grc(int x, int y, int flag) {//判断是否走了圆弧
-	//int x = msgmove.x;
-	//int y = msgmove.y;
-	if (chi)return;
-	printf("x:%d,y:%d",x,y);
-	if ((msgmove.x == 0 && msgmove.y == 0) || (msgmove.x == 0 && msgmove.y == 5) || (msgmove.x == 5 && msgmove.y == 0) || (msgmove.x == 5 && msgmove.y == 5)) {
-		MessageBox(NULL, "飞着走,想上天啊", "提示", MB_OK);
-		msgmove.n++;
-		return;
-	}
-
-	if ((map[x][y].name == 0 || map[x][y].name == msgmove.name) && flag)
-	{
-		printf("flag:%d",flag);
-		//MessageBox(NULL, "不能飞着走或者吃自己子哦", "提示", MB_OK);
-		msgmove.n++;
-		return;
-	}
-
-	// 如果是敌方棋子且经过圆弧
-	if (map[x][y].name != msgmove.name && flag == 1) {
-		msgmove.n++;
-		msgmove.nhb++;
-		printf("吃子");
-		map[msgmove.x][msgmove.y].name = 0;
-		map[msg.x][msg.y].name = msgmove.name;
-		chi = 1;
-		return;
-
-	}else if (map[x][y].name != msgmove.name) {
-		return;
-	}
-
-
-	if (msg.x == x && msg.y == y && flag == 1) {
-		msgmove.n++;
-		msgmove.nhb++;
-		printf("吃子");
-		map[msgmove.x][msgmove.y].name = 0;
-		map[msg.x][msg.y].name = msgmove.name;
-	}
-
-	printf("\n递归开始");
-
-	// 如果是切点的情况
-	if (x == 0 && y == 1) {
-		Grc(1, 0,1);
-	}
-	else if (x == 0 && y == 2) {
-		Grc(2, 0, 1);
-	}
-	else if (x == 0 && y == 3) {
-		Grc(2, 5,1);
-	}
-	else if (x == 0 && y == 4) {
-		Grc(1, 5, 1);
-	}
-	else if (x == 1 && y == 0) {
-		Grc(0, 1, 1);
-	}
-	else if (x == 2 && y == 0) {
-		Grc(0, 2, 1);
-	}
-	else if (x == 3 && y == 0) {
-		Grc(5, 2, 1);
-	}
-	else if (x == 4 && y == 0) {
-		Grc(5, 1, 1);
-	}
-	else if (x == 1 && y == 5) {
-		Grc(0, 4, 1);
-	}
-	else if (x == 2 && y == 5) {
-		Grc(0, 3, 1);
-	}
-	else if (x == 3 && y == 5) {
-		Grc(5, 3, 1);
-	}
-	else if (x == 4 && y == 5) {
-		Grc(5, 4, 1);
-	}
-	else if (x == 5 && y == 1) {
-		Grc(4, 0, 1);
-	}
-	else if (x == 5 && y == 2) {
-		Grc(3, 0, 1);
-	}
-	else if (x == 5 && y == 3) {
-		Grc(3, 5, 1);
-	}
-	else if (x == 5 && y == 4) {
-		Grc(4, 5, 1);
-	}
-
-	//// 上
-	if (x - 1 >= 0) {
-		Grc(x - 1, y, flag);
-	}
-
-
-	//// 下
-	if (x + 1 <= 5) {
-		Grc(x + 1, y,  flag);
-	}
-
-	//// 左
-	if (y - 1 >= 0) {
-		Grc(x, y - 1, flag);
-	}
-
-	//// 右
-	if (y + 1 <= 5) {
-		Grc(x, y + 1, flag);
-	}
-
-
-	//MessageBox(NULL, "落子不符合规则223", "提示", MB_OK);
-	return;
-}
-*/
 
 
 // 搜寻所选棋子的飞行吃子走位（深度优先）
@@ -232,6 +109,7 @@ void fly_dfs(int x, int y, int direction, int type, int flag) {
 		chi = 1;
 		map[msgmove.x][msgmove.y].name = 0;
 		map[msg.x][msg.y].name = msgmove.name;
+		hihe();   //调用回合函数
 		return;
 	}
 	else if (map[x][y].name != msgmove.name && (map[x][y].name != 0)) {
@@ -423,6 +301,12 @@ void zouzi(int he)
 					msgmove.name = map[msgmove.x][msgmove.y].name;
 				//	tishi();
 				}
+				else if (map[msg.x][msg.y].name == 0)
+				{
+					//MessageBox(NULL, "不是你的回合", "提示", MB_OK);
+					printf("\n此处没有棋子");
+
+				}
 				else if (map[msg.x][msg.y].name != he)
 				{
 					//MessageBox(NULL, "不是你的回合", "提示", MB_OK);
@@ -441,6 +325,12 @@ void zouzi(int he)
 					msgmove.y = msg.y;
 					msgmove.name = map[msgmove.x][msgmove.y].name;
 					//	tishi();
+				}
+				else if (map[msg.x][msg.y].name == 0)
+				{
+					//MessageBox(NULL, "不是你的回合", "提示", MB_OK);
+					printf("\n此处没有棋子");
+
 				}
 				else if (map[msg.x][msg.y].name != he)
 				{
@@ -461,6 +351,7 @@ void zouzi(int he)
 						chi = 0;
 						map[msgmove.x][msgmove.y].name = 0;
 						map[msg.x][msg.y].name = msgmove.name;
+						hihe();   //调用回合函数
 					}
 					else {
 						printf("\n落子不符合规则");
@@ -484,12 +375,22 @@ void zouzi(int he)
 }
 
 
+void AI(int ai) {
+	
+	printf("\n电脑落子\n");
+	map[1][0].name = 0;
+	map[2][0].name = ai;
+	msgmove.nhb++;
+
+}
+
 
 //鼠标移动棋子
 void GameControl2()
 {
 	if (MouseHit())//如果有鼠标消息
 	{
+		msg = GetMouseMsg();//获取鼠标消息
 		msg = GetMouseMsg();//获取鼠标消息
 		if (msg.uMsg == WM_LBUTTONDOWN)//当左键按下时
 		{
