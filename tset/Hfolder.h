@@ -56,6 +56,20 @@ struct msgmove
 	
 }msgmove;
 
+struct points_list
+{
+	int x;   // 用来存储最优选择点
+	int y;
+
+};
+
+struct startPoints
+{
+	int x;   // 用于存储每个遍历的点
+	int y;
+
+};
+
 //函数申明
 void show();
 void zouzi(int he);
