@@ -1,7 +1,8 @@
 #include"Hfolder.h"
 #pragma comment(lib,"winmm.lib")//加载库---音乐
 
-void AI(int ai);
+void setStep1(int x, int y, int type);
+void AI();
 
 //遍历棋子个数
 void number()
@@ -61,8 +62,8 @@ void hihe()
 	ixd = msgmove.nhb % 2;
 	if (ixd == 1)
 	{
-		//zouzi(1);  //调用走子函数
-		AI(1);
+		zouzi(1);  //调用走子函数
+		//AI(1);
 	}
 	else if (ixd == 0)
 	{
@@ -375,14 +376,276 @@ void zouzi(int he)
 }
 
 
-void AI(int ai) {
-	
-	printf("\n电脑落子\n");
-	map[1][0].name = 0;
-	map[2][0].name = ai;
-	msgmove.nhb++;
+//==================================================================================
+int startPoints[]; // 用于存储每个遍历的点
+int points_list[]; // 用来存储最优选择点
+int score_list[]; // 用来存储每个电脑棋子的最优选择点的预估分
+int state_temp[6][6]={ { 1, 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1, 1 }, { 0, 0, 0, 0, 0, 0 },
+			{ 0, 0, 0, 0, 0, 0 }, { 2, 2, 2, 2, 2, 2 }, {  2, 2, 2, 2, 2, 2 } };
+int step_temp[6][6] = { { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 },
+			{ 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 } };
+
+ //机器AI
+void AI() {
+
+	//startPoints.clear();
+	// points_list.clear();
+	// score_list.clear();
+
+	int x = 0;
+	int y = 0;
+
+	int maxs = -127;
+	int f = 0;
+	int score = 0;
+
+	// 遍历所有的电脑棋子
+	for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 6; j++) {
+
+
+			if (map[i][j].name == 1) {
+				for (int m = 0; m < 6; m++) {
+					for (int n = 0; n < 6; n++) {
+						state_temp[m][n] = map[m][n].name;
+					}
+				}
+
+				for (int m = 0; m < 6; m++) {
+					for (int n = 0; n < 6; n++)
+						step_temp[m][n] = 0;
+				}
+
+				search1(i, j);
+			}
+		}
+	}
+
+	for (int i = 0; i < score_list.size(); i++) {
+		//System.out.println(score_list.get(i));
+		//System.out.println(startPoints.get(i).x + " " + startPoints.get(i).y);
+		//System.out.println(points_list.get(i).x + " " + points_list.get(i).y);
+		if (score_list.get(i) > maxs) {
+			maxs = score_list.get(i);
+			f = i;
+		}
+	}
+
+	myPanel.state[points_list.get(f).x][points_list.get(f).y] = -1;
+	myPanel.state[startPoints.get(f).x][startPoints.get(f).y] = 0;
+
+	//		System.out.println(points_list.get(f).x + " " + points_list.get(f).y);
+	//		System.out.println(startPoints.get(f).x + " " + startPoints.get(f).y);
+	//		for(int i = 0; i < 6; i++) {
+	//			for(int j = 0; j < 6; j++) {
+	//				System.out.print(myPanel.state[i][j]+" ");
+	//			}
+	//			System.out.print("\n");
+	//		}
+}
+
+// 电脑玩家对弈走法模拟，返回（X，Y）棋子的最佳着棋
+void search1(int x, int y) {
+
+	int maxs = -127;
+	int score = 0;
+	int xx = 0, yy = 0;
+	// 回合模拟
+	setStep1(x, y, 1);
+
+
+	int s1[6][6];
+	int s2[6][6];
+	for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 6; j++) {
+			s1[i][j] = state_temp[i][j];
+		}
+	}
+	for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 6; j++) {
+			s2[i][j] = step_temp[i][j];
+		}
+	}
+	//		
+	//		for(int i = 0;i < 6; i++) {
+	//			for(int j = 0; j < 6; j++) {
+	//				System.out.print(step_temp[i][j]+" ");
+	//			}
+	//			System.out.print("\n");
+	//		}
+
+			//遍历可落子点
+	for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 6; j++) {
+
+			for (int a1 = 0; a1 < 6; a1++) {
+				for (int a2 = 0; a2 < 6; a2++) {
+					state_temp[a1][a2] = s1[a1][a2];
+				}
+			}
+			for (int a1 = 0; a1 < 6; a1++) {
+				for (int a2 = 0; a2 < 6; a2++) {
+					step_temp[a1][a2] = s2[a1][a2];
+				}
+			}
+
+			if (step_temp[i][j] == 1) {
+
+				score = 0;
+				if (state_temp[i][j] == 1) { //吃子
+
+					score += 2;
+					state_temp[i][j] = -1;
+					state_temp[x][y] = 0;
+				}
+				else { //不吃子
+					score++;
+					state_temp[i][j] = -1;
+					state_temp[x][y] = 0;
+				}
+
+				//int[][] a = state_temp.clone();
+				int[][] a = new int[6][6];
+				for (int a1 = 0; a1 < 6; a1++) {
+					for (int a2 = 0; a2 < 6; a2++) {
+						a[a1][a2] = state_temp[a1][a2];
+					}
+				}
+
+				//模拟玩家
+				for (int m = 0; m < 6; m++) {
+					for (int n = 0; n < 6; n++) {
+
+						//state_temp = a.clone();
+						for (int a1 = 0; a1 < 6; a1++) {
+							for (int a2 = 0; a2 < 6; a2++) {
+								state_temp[a1][a2] = a[a1][a2];
+							}
+						}
+
+						if (state_temp[m][n] == 1) {
+
+							for (int x1 = 0; x1 < 6; x1++) {
+								for (int y1 = 0; y1 < 6; y1++) {
+									step_temp[x1][y1] = 0;
+								}
+							}
+
+							int score1 = score;
+							setStep1(m, n, 1);
+
+							//								int[][] s3 = state_temp.clone();
+							//								int[][] s4 = step_temp.clone();
+							int[][] s3 = new int[6][6];
+							int[][] s4 = new int[6][6];
+							for (int a1 = 0; a1 < 6; a1++) {
+								for (int a2 = 0; a2 < 6; a2++) {
+									s3[a1][a2] = state_temp[a1][a2];
+								}
+							}
+							for (int a1 = 0; a1 < 6; a1++) {
+								for (int a2 = 0; a2 < 6; a2++) {
+									s4[a1][a2] = step_temp[a1][a2];
+								}
+							}
+
+							for (int o = 0; o < 6; o++) {
+								for (int p = 0; p < 6; p++) {
+
+									//										state_temp = s3.clone();
+									//										step_temp = s4.clone();
+									for (int a1 = 0; a1 < 6; a1++) {
+										for (int a2 = 0; a2 < 6; a2++) {
+											state_temp[a1][a2] = s3[a1][a2];
+										}
+									}
+									for (int a1 = 0; a1 < 6; a1++) {
+										for (int a2 = 0; a2 < 6; a2++) {
+											step_temp[a1][a2] = s4[a1][a2];
+										}
+									}
+
+									if (step_temp[o][p] == 1) {
+										//吃子
+										if (state_temp[o][p] == 1) {
+											score1 -= 2;
+										}
+										else {
+											score1++;
+										}
+									}
+								}
+							}
+							if (score1 > score1) {
+								score = score1;
+							}
+						}
+
+					}
+				}
+				if (score > maxs) {
+					xx = i;
+					yy = j;
+					maxs = score;
+				}
+			}
+		}
+	}
+
+	startPoints.add(new Point(x, y));
+	points_list.add(new Point(xx, yy));
+	score_list.add(maxs);
+	System.out.println(maxs);
+}
+
+// ai 将某个棋子可走的点标注出来
+void setStep1(int x, int y, int type) {
+
+	if (x - 1 >= 0) {
+		if (state_temp[x - 1][y] != type)
+			step_temp[x - 1][y] = 1;
+	}
+	if (x + 1 <= 5) {
+		if (state_temp[x + 1][y] != type)
+			step_temp[x + 1][y] = 1;
+	}
+	if (y - 1 >= 0) {
+		if (state_temp[x][y - 1] != type)
+			step_temp[x][y - 1] = 1;
+	}
+	if (y + 1 <= 5) {
+		if (state_temp[x][y + 1] != type)
+			step_temp[x][y + 1] = 1;
+	}
+	if (x - 1 >= 0 && y - 1 >= 0) {
+		if (state_temp[x - 1][y - 1] != type)
+			step_temp[x - 1][y - 1] = 1;
+	}
+	if (x + 1 <= 5 && y - 1 >= 0) {
+		if (state_temp[x + 1][y - 1] != type)
+			step_temp[x + 1][y - 1] = 1;
+	}
+	if (x - 1 >= 0 && y + 1 <= 5) {
+		if (state_temp[x - 1][y + 1] != type)
+			step_temp[x - 1][y + 1] = 1;
+	}
+	if (x + 1 <= 5 && y + 1 <= 5) {
+		if (state_temp[x + 1][y + 1] != type)
+			step_temp[x + 1][y + 1] = 1;
+	}
+
+	fly_dfs(x, y, 0, type, 0);
 
 }
+
+//void AI(int ai) {
+//	
+//	printf("\n电脑落子\n");
+//	map[1][0].name = 0;
+//	map[2][0].name = ai;
+//	msgmove.nhb++;
+//
+//}
 
 
 //鼠标移动棋子
