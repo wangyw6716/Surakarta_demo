@@ -379,9 +379,9 @@ void zouzi(int he)
 
 //==================================================================================
 
-struct startPoints startPoints[50000]; // 用于存储每个遍历的点
-struct points_list points_list[50000]; // 用来存储最优选择点
-int score_list[50000]; // 用来存储每个电脑棋子的最优选择点的预估分
+struct startPoints startPoints[] = {0,0}; // 用于存储每个遍历的点
+struct points_list points_list[] = { 0,0 }; // 用来存储最优选择点
+int score_list[] = {0}; // 用来存储每个电脑棋子的最优选择点的预估分
 int state_temp[6][6]={ { 1, 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1, 1 }, { 0, 0, 0, 0, 0, 0 },
 			{ 0, 0, 0, 0, 0, 0 }, { 2, 2, 2, 2, 2, 2 }, {  2, 2, 2, 2, 2, 2 } };
 int step_temp[6][6] = { { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 },
@@ -789,10 +789,10 @@ void search1(int x, int y) {
 
 	//startPoints.add(new Point(x, y));
 	startPoints[lenstartPoints] = {x,y};
-	startPoints[lenpoints_list] = {xx,yy};
+	points_list[lenpoints_list] = {xx,yy};
 	//points_list.add(new Point(xx, yy));
 	score_list[lenscore_list] = maxs;
-	printf("lenstartPoints:%d", lenstartPoints);
+	printf("lenstartPoints:%d  %d\n", x,y);
 	printf("maxs:%d",maxs);
 }
 
