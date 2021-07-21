@@ -400,6 +400,10 @@ void AI() {
 		map[2][0].name = 1;
 		//msgmove.nhb++;
 	}
+	else {
+		map[2][0].name = 0;
+		map[1][0].name = 1;
+	}
 	msgmove.nhb++;
 }
 
