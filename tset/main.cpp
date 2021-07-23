@@ -409,6 +409,12 @@ void AI() {
 			printf("电脑从[0,5]-->[1,4]");
 			//msgmove.nhb++;
 		}
+		else if (!map[2][5].name && map[1][5].name) {
+			map[1][5].name = 0;
+			map[2][5].name = 1;
+			printf("电脑从[1,5]-->[2,5]");
+			//msgmove.nhb++;
+		}
 		else if (!map[2][0].name && map[1][0].name) {
 			map[1][0].name = 0;
 			map[2][0].name = 1;
