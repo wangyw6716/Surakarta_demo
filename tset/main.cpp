@@ -63,6 +63,7 @@ void hihe()
 	if (ixd == 1)
 	{
 		//zouzi(1);  //调用走子函数
+		msgmove.name = 1;
 		AI();
 	}
 	else if (ixd == 0)
@@ -93,7 +94,7 @@ void hihe()
 // direction为搜索路线方向，0四个方向，1上，2下，3左，4右，type为棋子类型(废弃,没有用)
 int chi = 0;
 void fly_dfs(int x, int y, int direction, int type, int flag) {
-	printf("\nx:%d,y:%d,direction:%d,flag:%d", x, y, direction, flag);
+	//printf("\nx:%d,y:%d,direction:%d,flag:%d", x, y, direction, flag);
 	if (chi)return;
 	// 四个角
 	if ((x == 0 && y == 0) || (x == 0 && y == 5) || (x == 5 && y == 0) || (x == 5 && y == 5)) {
@@ -106,7 +107,7 @@ void fly_dfs(int x, int y, int direction, int type, int flag) {
 		msgmove.nhb++;
 		printf("落子点:x:%d,y:%d", msg.x, msg.y);
 		printf("\n吃子");
-		printf("\nx:%d,y:%d,direction:%d,flag:%d\n", x, y, direction, flag);
+		//printf("\nx:%d,y:%d,direction:%d,flag:%d\n", x, y, direction, flag);
 		chi = 1;
 		map[msgmove.x][msgmove.y].name = 0;
 		map[msg.x][msg.y].name = msgmove.name;
@@ -124,7 +125,7 @@ void fly_dfs(int x, int y, int direction, int type, int flag) {
 
 	// 起始点
 	if (!direction) {
-		printf("\ndirection=%d", direction);
+		//printf("\ndirection=%d", direction);
 		// 如果是切点的情况
 		if (x == 0 && y == 1) {
 			fly_dfs(1, 0, 4, type, 1);
@@ -177,7 +178,6 @@ void fly_dfs(int x, int y, int direction, int type, int flag) {
 
 		// 上
 		if (x - 1 >= 0) {
-			printf("x-1执行了");
 			fly_dfs(x - 1, y, 1, type, flag);
 		}
 
@@ -252,7 +252,6 @@ void fly_dfs(int x, int y, int direction, int type, int flag) {
 		// 上
 		if (direction == 1) {
 			if (x - 1 >= 0) {
-				printf("向上走了");
 				fly_dfs(x - 1, y, direction, type, flag);
 			}
 		}
@@ -260,7 +259,6 @@ void fly_dfs(int x, int y, int direction, int type, int flag) {
 		// 下
 		if (direction == 2) {
 			if (x + 1 <= 5) {
-				printf("向下走了");
 				fly_dfs(x + 1, y, direction, type, flag);
 			}
 		}
@@ -268,7 +266,6 @@ void fly_dfs(int x, int y, int direction, int type, int flag) {
 		// 左
 		if (direction == 3) {
 			if (y - 1 >= 0) {
-				printf("向左走了");
 				fly_dfs(x, y - 1, direction, type, flag);
 			}
 		}
@@ -276,7 +273,6 @@ void fly_dfs(int x, int y, int direction, int type, int flag) {
 		// 右
 		if (direction == 4) {
 			if (y + 1 <= 5) {
-				printf("向右走了");
 				fly_dfs(x, y + 1, direction, type, flag);
 			}
 		}
@@ -343,7 +339,7 @@ void zouzi(int he)
 				fly_dfs(msgmove.x, msgmove.y, 0, 0, 0); 
 				if (msg.x - msgmove.x<2 && msg.y - msgmove.y<2 && msg.x - msgmove.x>-2 && msg.y - msgmove.y>-2 && !chi)
 				{
-					if (map[msg.x][msg.y].name == 0)//判断该坐标是否有棋子或吃子 || map[msg.x][msg.y].name != msgmove.name  判断该点是否有棋子,没棋子就允许落子
+					if (map[msg.x][msg.y].name == 0 || msgmove.name==1)//判断该坐标是否有棋子或吃子 || map[msg.x][msg.y].name != msgmove.name  判断该点是否有棋子,没棋子就允许落子
 					{
 						msgmove.n++;
 						msgmove.nhb++;
@@ -361,8 +357,8 @@ void zouzi(int he)
 						printf("\n请重新拿子");
 					}
 				}
-				else if (!chi) {
-					printf("\n落子不符合规则");
+				else if (!chi && msgmove.name == 2) {
+					printf("\n落子不符合规则!");
 					//MessageBox(NULL, "落子不符合规则", "提示", MB_OK);
 					msgmove.n++;
 					chi = 0;
@@ -375,37 +371,79 @@ void zouzi(int he)
 }
 
 void AI() {
-	if (!map[2][1].name) {
-		map[1][0].name = 0;
-		map[2][1].name = 1;
-		/*msgmove.nhb++;*/
+	if (map[2][5].name == 2 && map[0][3].name) {
+		msgmove.x = 0;
+		msgmove.y = 3;
+		msgmove.n++;
+		fly_dfs(0, 3, 0, 0, 0);
+
 	}
-	else if(!map[1][0].name) {
-		map[0][0].name = 0;
-		map[1][0].name = 1;
-		//msgmove.nhb++;
-	}
-	else if (!map[2][3].name) {
-		map[1][4].name = 0;
-		map[2][3].name = 1;
-		//msgmove.nhb++;
-	}
-	else if (!map[1][4].name) {
-		map[0][5].name = 0;
-		map[1][4].name = 1;
-		//msgmove.nhb++;
-	}
-	else if (!map[2][0].name) {
-		map[1][0].name = 0;
-		map[2][0].name = 1;
-		//msgmove.nhb++;
+	else if(map[2][4].name == 2 && map[0][3].name){
+		msgmove.x = 0;
+		msgmove.y = 3;
+		msgmove.n++;
+		fly_dfs(0, 3, 0, 0, 0);
 	}
 	else {
-		map[2][0].name = 0;
-		map[1][0].name = 1;
+		if (!map[2][1].name && map[1][0].name) {
+			map[1][0].name = 0;
+			map[2][1].name = 1;
+			printf("\n电脑从[1,0]-->[2,1]");
+			/*msgmove.nhb++;*/
+		}
+		else if (!map[1][0].name && map[0][0].name) {
+			map[0][0].name = 0;
+			map[1][0].name = 1;
+			printf("电脑从[0,0]-->[1,0]");
+			//msgmove.nhb++;
+		}
+		else if (!map[2][3].name && map[1][4].name) {
+			map[1][4].name = 0;
+			map[2][3].name = 1;
+			printf("电脑从[1,4]-->[2,3]");
+			//msgmove.nhb++;
+		}
+		else if (!map[1][4].name && map[0][5].name) {
+			map[0][5].name = 0;
+			map[1][4].name = 1;
+			printf("电脑从[0,5]-->[1,4]");
+			//msgmove.nhb++;
+		}
+		else if (!map[2][0].name && map[1][0].name) {
+			map[1][0].name = 0;
+			map[2][0].name = 1;
+			printf("电脑从[1,0]-->[2,0]");
+			//msgmove.nhb++;
+		}
+		else if (!map[2][2].name && map[1][2].name) {
+			map[1][2].name = 0;
+			map[2][2].name = 1;
+			printf("电脑从[1,2]-->[2,2]");
+			//msgmove.nhb++;
+		}
+		//else if (map[2][0].name && !map[1][0].name) {
+		//	map[2][0].name = 0;//来回反复
+		//	map[1][0].name = 1;
+		//	printf("电脑从[2,0]-->[1,0]");
+		//}
+		else if (!map[1][2].name && map[1][3].name) {
+			map[1][3].name = 0;
+			map[1][2].name = 1;
+			printf("电脑从[1,3]-->[1,2]");
+			//msgmove.nhb++;
+		}
+		else if (map[1][2].name && !map[1][3].name) {
+			map[1][2].name = 0;  //来回反复
+			map[1][3].name = 1;
+			printf("电脑从[1,2]-->[1,3]");
+			//msgmove.nhb++;
+		}
+		
+		msgmove.nhb++;
 	}
-	msgmove.nhb++;
+	printf(",走了一步\n");
 }
+
 
 
 
